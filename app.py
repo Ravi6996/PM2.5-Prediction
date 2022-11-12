@@ -61,7 +61,7 @@ def predict():
 
     output = round(prediction[0], 9)
 
-    return render_template('index.html', prediction_text='PM2.5 value should be $ {}'.format(output))
+    return render_template('index.html', prediction_text='PM2.5 value should be {}'.format(output))
 
 @app.route('/predict_api',methods=['POST'])
 def predict_api():
