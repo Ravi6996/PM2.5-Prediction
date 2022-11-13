@@ -71,7 +71,7 @@ dataset.nunique()
 # 
 # **6)Outliers**
 # 
-# **7)Relationship between independent and dependent feature(SalePrice)**
+# **7)Relationship between independent and dependent feature**
 
 # **MISSING VALUES**
 
