@@ -3,7 +3,7 @@
 
 # **Importing Important Libraries**
 
-# In[194]:
+# In[1]:
 
 
 import numpy as np
@@ -18,32 +18,40 @@ pd.pandas.set_option('display.max_columns',None)#because we want to see all the 
 
 # **Reading the Dataset**
 
-# In[195]:
+# In[2]:
 
 
 dataset=pd.read_csv('train.csv')
 print(dataset.shape)
 
 
-# In[196]:
+# **Analysing the First 5 rows of data using head()**
+
+# In[3]:
 
 
 dataset.head()
 
 
-# In[197]:
+# **Analysing The data using describe**
+
+# In[4]:
 
 
 dataset.describe()
 
 
-# In[198]:
+# **Checcking for the datatype using .info()**
+
+# In[5]:
 
 
 dataset.info()
 
 
-# In[199]:
+# **Checking for null values using .nunique()**
+
+# In[6]:
 
 
 dataset.nunique()
@@ -67,7 +75,7 @@ dataset.nunique()
 
 # **MISSING VALUES**
 
-# In[200]:
+# In[7]:
 
 
 feature_with_na=[features for features in dataset.columns if dataset[features].isnull().sum()>1]
@@ -77,7 +85,7 @@ for feature in feature_with_na: print(feature,np.round(dataset[feature].isnull()
 
 # **Since there are many missing values we need to find the relation between the missing values and PM2.5**
 
-# In[201]:
+# In[8]:
 
 
 for feature in feature_with_na:
@@ -91,43 +99,53 @@ for feature in feature_with_na:
 
 # **Here with the relation between the missing values and dependent variables is clearly visible. So we need to replace these nan values with something meaningful which we will do in the feature engineering section.**
 
-# In[202]:
+# In[9]:
 
 
 dataset.isnull().sum()
 
 
-# In[203]:
+# **Viewing The Dataset**
+
+# In[10]:
 
 
 dataset
 
 
-# In[204]:
+# **Convering the string values to float so that its datatype changes from object to float**
+
+# In[11]:
 
 
-dataset['pressure'] = dataset['pressure'].astype(float)#to conver the string values to float, and converting pressure to a numerical value
+dataset['pressure'] = dataset['pressure'].astype(float)
 
 
-# In[205]:
+# In[12]:
 
 
 dataset
 
 
-# In[206]:
+# **As the datatype is object, so we will replace the nan values with mode**
+
+# In[13]:
 
 
 dataset['wind_direction']=dataset['wind_direction'].fillna(dataset['wind_direction'].mode()[0])
 
 
-# In[207]:
+# **|As the datatype is float, we will replace the missing values with the mean**
+
+# In[14]:
 
 
 dataset.fillna(dataset.mean(),inplace=True)
 
 
-# In[208]:
+# **Checking for null values**
+
+# In[15]:
 
 
 dataset.isnull().sum()
@@ -135,7 +153,7 @@ dataset.isnull().sum()
 
 # **##Unnamed: 0 has no relation with the prediction of PM2.5, so we can remove it##**
 
-# In[209]:
+# In[16]:
 
 
 dataset.drop(['Unnamed: 0'],axis=1,inplace=True)
@@ -145,231 +163,311 @@ dataset.drop(['Unnamed: 0'],axis=1,inplace=True)
 
 # **OUTLIERS**
 
-# In[210]:
+# In[17]:
 
 
 dataset
 
 
-# In[211]:
+# **Plotting a scatterplot of Dependent and independent values to check for Outliers(Analysing from the plot if they are present or not)**
+
+# **Scaatterplot of PM2.5 and Year**
+
+# In[18]:
+
+
+plt.scatter(dataset['year'],dataset['PM2.5'])
+
+
+# **Scaatterplot of PM2.5 and Month**
+
+# In[19]:
+
+
+plt.scatter(dataset['month'],dataset['PM2.5'])
+
+
+# **Scaatterplot of PM2.5 and day**
+
+# In[20]:
+
+
+plt.scatter(dataset['day'],dataset['PM2.5'])
+
+
+# **Scaatterplot of PM2.5 and Hour**
+
+# In[21]:
+
+
+plt.scatter(dataset['hour'],dataset['PM2.5'])
+
+
+# **Scaatterplot of PM2.5 and Temperature**
+
+# In[22]:
+
+
+plt.scatter(dataset['temperature'],dataset['PM2.5'])
+
+
+# **Scaatterplot of PM2.5 and Pressure**
+
+# In[23]:
+
+
+plt.scatter(dataset['pressure'],dataset['PM2.5'])
+
+
+# **Scaatterplot of PM2.5 and Rain**
+
+# In[24]:
+
+
+plt.scatter(dataset['rain'],dataset['PM2.5'])
+
+
+# **Scaatterplot of PM2.5 and Wind Direction**
+
+# In[25]:
+
+
+plt.scatter(dataset['wind_direction'],dataset['PM2.5'])
+
+
+# **Scaatterplot of PM2.5 and Wind Speed**
+
+# In[26]:
+
+
+plt.scatter(dataset['wind_speed'],dataset['PM2.5'])
+
+
+# **As we have seen through the plots that there are outliers present, so we will clean them using quantile methods**
+
+# In[27]:
 
 
 min_threshold,max_threshold=dataset.year.quantile([0.001,0.999])
 min_threshold,max_threshold
 
 
-# In[212]:
+# **Checking for year**
+
+# In[28]:
 
 
 dataset[dataset.year<min_threshold]
 
 
-# In[213]:
+# In[29]:
 
 
 dataset[dataset.year>max_threshold]
 
 
-# In[214]:
+# In[30]:
 
 
 dataset[dataset.year<min_threshold]
 
 
-# In[215]:
+# In[31]:
 
 
 dataset=dataset[(dataset.year>=min_threshold) & (dataset.year<=max_threshold)]
 
 
-# In[216]:
+# **Checking for month**
 
-
-dataset.shape
-
-
-# In[217]:
-
-
-dataset
-
-
-# In[218]:
+# In[32]:
 
 
 minm_threshold,maxm_threshold=dataset.month.quantile([0.001,0.999])
 minm_threshold,maxm_threshold
 
 
-# In[219]:
+# In[33]:
 
 
 dataset[dataset.month<minm_threshold]
 
 
-# In[220]:
+# In[34]:
 
 
 dataset[dataset.month>maxm_threshold]
 
 
-# In[221]:
+# In[35]:
 
 
 dataset=dataset[(dataset.month>=minm_threshold) & (dataset.month<=maxm_threshold)]
 dataset
 
 
-# In[222]:
+# **Checking for day**
+
+# In[36]:
 
 
 minm_threshold,maxm_threshold=dataset.day.quantile([0.001,0.999])
 minm_threshold,maxm_threshold
 
 
-# In[223]:
+# In[37]:
 
 
 dataset[dataset.day<minm_threshold]
 
 
-# In[224]:
+# In[38]:
 
 
 dataset[dataset.day>maxm_threshold]
 
 
-# In[225]:
+# In[39]:
 
 
 dataset=dataset[(dataset.day>=minm_threshold) & (dataset.day<=maxm_threshold)]
 dataset
 
 
-# In[226]:
+# **Checking for hour**
+
+# In[40]:
 
 
 minm_threshold,maxm_threshold=dataset.hour.quantile([0.001,0.999])
 minm_threshold,maxm_threshold
 
 
-# In[227]:
+# In[41]:
 
 
 dataset[dataset.hour<minm_threshold]
 
 
-# In[228]:
+# In[42]:
 
 
 dataset[dataset.hour>maxm_threshold]
 
 
-# In[229]:
+# In[43]:
 
 
 dataset=dataset[(dataset.hour>=minm_threshold) & (dataset.hour<=maxm_threshold)]
 dataset
 
 
-# In[230]:
+# **Scaatterplot of PM2.5 and Temperature**
+
+# In[44]:
 
 
 minm_threshold,maxm_threshold=dataset.temperature.quantile([0.001,0.999])
 minm_threshold,maxm_threshold
 
 
-# In[231]:
+# In[45]:
 
 
 dataset[dataset.temperature<minm_threshold]
 
 
-# In[232]:
+# In[46]:
 
 
 dataset[dataset.temperature>maxm_threshold]
 
 
-# In[233]:
+# In[47]:
 
 
 dataset=dataset[(dataset.temperature>=minm_threshold) & (dataset.temperature<=maxm_threshold)]
 dataset
 
 
-# In[234]:
+# **Checking for PM2.5**
+
+# In[48]:
 
 
 minm_threshold,maxm_threshold=dataset['PM2.5'].quantile([0.0001,0.9999])
 minm_threshold,maxm_threshold
 
 
-# In[235]:
+# In[49]:
 
 
 dataset[dataset['PM2.5']<minm_threshold]
 
 
-# In[236]:
+# In[50]:
 
 
 dataset[dataset['PM2.5']>maxm_threshold]
 
 
-# In[237]:
+# In[51]:
 
 
 dataset=dataset[(dataset['PM2.5']>=minm_threshold) & (dataset['PM2.5']<=maxm_threshold)]
 dataset
 
 
-# In[238]:
+# **Checking for Pressure**
+
+# In[52]:
 
 
 min_threshold,max_threshold=dataset.pressure.quantile([0.001,0.9999])
 min_threshold,max_threshold
 
 
-# In[239]:
+# In[53]:
 
 
 dataset[dataset['pressure']<min_threshold]
 
 
-# In[240]:
+# In[54]:
 
 
 dataset[dataset['pressure']>max_threshold]
 
 
-# In[241]:
+# In[55]:
 
 
 dataset=dataset[(dataset['pressure']>=min_threshold) & (dataset['pressure']<=max_threshold)]
 dataset
 
 
-# In[242]:
+# **Checking for Rain**
+
+# In[56]:
 
 
 min_threshold,max_threshold=dataset.rain.quantile([0.001,0.9999])
 min_threshold,max_threshold
 
 
-# In[243]:
+# In[57]:
 
 
 dataset[dataset['rain']<min_threshold]
 
 
-# In[244]:
+# In[58]:
 
 
 dataset[dataset['rain']>max_threshold]
 
 
-# In[245]:
+# In[59]:
 
 
 dataset=dataset[(dataset['rain']>=min_threshold) & (dataset['rain']<=max_threshold)]
@@ -380,19 +478,21 @@ dataset
 
 # **NUMERICAL AND CATEGORICAL VARIABLES**
 
-# In[246]:
+# In[60]:
 
 
 dataset.info()
 
 
-# In[247]:
+# In[61]:
 
 
 dataset.head()
 
 
-# In[248]:
+# **Checking for numerical Variables**
+
+# In[62]:
 
 
 numerical_features = [feature for feature in dataset.columns if dataset[feature].dtypes != 'O']
@@ -403,26 +503,30 @@ print('Number of numerical variables: ', len(numerical_features))
 dataset[numerical_features].head()
 
 
-# In[249]:
+# **Checking for discrete features in Numerical Variables**
+
+# In[63]:
 
 
 discrete_feature=[feature for feature in numerical_features if len(dataset[feature].unique())<25]
 print("Discrete Variables Count: {}".format(len(discrete_feature)))
 
 
-# In[250]:
+# In[64]:
 
 
 discrete_feature
 
 
-# In[251]:
+# In[65]:
 
 
 dataset[discrete_feature].head()
 
 
-# In[252]:
+# **Analysing the discrete variables by plotting their bar plot**
+
+# In[66]:
 
 
 for feature in discrete_feature:
@@ -434,14 +538,18 @@ for feature in discrete_feature:
     plt.show()
 
 
-# In[253]:
+# **Checking for continous features**
+
+# In[67]:
 
 
 continuous_feature=[feature for feature in numerical_features if feature not in discrete_feature]
 print("Continuous feature Count {}".format(len(continuous_feature)))
 
 
-# In[254]:
+# **Analysing the continous features using histogram**
+
+# In[68]:
 
 
 
@@ -454,7 +562,9 @@ for feature in continuous_feature:
     plt.show()
 
 
-# In[255]:
+# **Plotting the scaterplots of Continous features with dependent feature**
+
+# In[69]:
 
 
 for feature in continuous_feature:
@@ -473,27 +583,27 @@ for feature in continuous_feature:
 
 # **CaATEGORICAL VARIABLES**
 
-# In[256]:
+# In[70]:
 
 
 categorical_features=[feature for feature in dataset.columns if data[feature].dtypes=='O']
 categorical_features
 
 
-# In[257]:
+# In[71]:
 
 
 dataset[categorical_features].head()
 
 
-# In[258]:
+# In[72]:
 
 
 for feature in categorical_features:
     print('The feature is {} and number of categories are {}'.format(feature,len(dataset[feature].unique())))
 
 
-# In[259]:
+# In[73]:
 
 
 for feature in categorical_features:
@@ -505,7 +615,9 @@ for feature in categorical_features:
     plt.show()
 
 
-# In[261]:
+# **Converting Categorical Data to Numerical values from 0 to 15**
+
+# In[74]:
 
 
 for feature in categorical_features:
@@ -514,53 +626,168 @@ for feature in categorical_features:
     dataset[feature]=dataset[feature].map(labels_ordered)
 
 
-# In[262]:
+# In[75]:
 
 
-dataset.head(10)
+dataset.head(90)
 
 
-# **Splitting The Data In Test and Train**
+# **Splitting The Data In Dependent and Independent Features**
 
-# In[263]:
+# In[113]:
 
 
 X=dataset.drop(['PM2.5'],axis=1)
 y=dataset['PM2.5']
 
 
-# **Training The Data Using Sci-Kit Library**
+# **Importing Train_Test_split using sci-kit library**
 
-# In[264]:
+# In[ ]:
 
 
 from sklearn.model_selection import train_test_split
-X_train,X_test,y_train,y_test=train_test_split(X,y,random_state=0,test_size=0.2)
+X_train,X_test,y_train,y_test=train_test_split(X,y,random_state=0,test_size=0.05)
 
 
-# In[265]:
+# **Training The Data Using Sci-Kit Library**
+
+# **Importing Linear Regression using Sklearn.linear_model**
+
+# In[ ]:
 
 
 from sklearn.linear_model import LinearRegression
-regressor=LinearRegression()
-regressor.fit(X_train,y_train)
+ml=LinearRegression()
 
 
-# In[270]:
+# **Performing Cross Validations**
+
+# **KFold Validation**
+
+# In[ ]:
 
 
-y_pred=regressor.predict(X_test)
-y_pred
+from sklearn.model_selection import KFold
+KFold_validation=KFold()
+from sklearn.model_selection import cross_val_score
+results=cross_val_score(ml,X,y,cv=KFold_validation)
+print(results)
+print(np.mean(results))
 
 
-# In[267]:
+# **ShuffleSplit Validation**
+
+# In[ ]:
+
+
+from sklearn.model_selection import ShuffleSplit
+ssplit=ShuffleSplit(n_splits=1,test_size=0.1)
+results=cross_val_score(ml,X,y,cv=ssplit)
+np.mean(results)
+
+
+# **Performing HyperParameter tuning**
+
+# **Importing Xgboost**
+
+# In[ ]:
+
+
+import xgboost
+regressor=xgboost.XGBRegressor()
+
+
+# In[ ]:
+
+
+booster=['gbtree','gblinear']
+base_score=[0.25,0.5,0.75,0.1]
+
+
+# **Listing All the parameters**
+
+# In[ ]:
+
+
+n_estimators=[100,500,900,1100,1500]
+max_depth=[2,3,5,10,15]
+booster=['gbtree','gblinear']
+learning_rate=[0.05,0.1,0.150,0.20]
+min_child_weight=[1,2,3,4]
+
+hyperparameter_grid={
+    'n_estimators':n_estimators,
+    'max_depth':max_depth,
+    'learning_rate':learning_rate,
+    'min_child_weight':min_child_weight,
+    'booster':booster,
+    'base_score':base_score
+}
+
+
+# **Importing Randomised Search using Sci-Kit library**
+
+# In[ ]:
+
+
+from sklearn.model_selection import RandomizedSearchCV
+random_cv=RandomizedSearchCV(estimator=regressor,param_distributions=hyperparameter_grid,
+          cv=5,n_iter=50,
+          scoring='neg_mean_absolute_error',n_jobs=4,
+          verbose=5,
+          return_train_score=True,
+          random_state=42)
+
+
+# **Fitting the training data**
+
+# Running this cell will tak 10 to 12 mins ,so wait patiently
+
+# In[ ]:
+
+
+random_cv.fit(X_train,y_train)
+
+
+# **Analysing the best estimator**
+
+# In[ ]:
+
+
+random_cv.best_estimator_
+
+
+# In[ ]:
+
+
+best_model = random_cv.best_estimator_
+
+
+# In[ ]:
+
+
+regressor=xgboost.XGBRegressor(base_score=0.5, booster='gbtree', colsample_bylevel=1,
+       colsample_bytree=1, gamma=0, learning_rate=0.05, max_delta_step=0,
+       max_depth=3, min_child_weight=1, missing=None, n_estimators=900,
+       n_jobs=1, nthread=None, objective='reg:linear', random_state=0,
+       reg_alpha=0, reg_lambda=1, scale_pos_weight=1, seed=None,
+       silent=True, subsample=1)
+
+
+# **finding The r2_score**
+
+# In[ ]:
 
 
 from sklearn.metrics import r2_score
+y_pred=best_model.predict(X_test)
 r2_score(y_test,y_pred)
 
 
-# In[268]:
+# **Plotting a scatterplot of Actual Vs Predicted**
+
+# In[ ]:
 
 
 plt.figure(figsize=(15,10))
@@ -570,19 +797,14 @@ plt.ylabel('Predicted')
 plt.title('Actual vs Predicted')
 
 
-# In[269]:
-
-
-pred_y_df=pd.DataFrame({'Actual Value':y_test,'Predicted Value':y_pred,'Difference':y_test-y_pred})
-pred_y_df[0:20]
-
+# **Using pickle for Deployment usin Flask**
 
 # In[ ]:
 
-pickle.dump(regressor,open('model.pkl','wb'))
+
+pickle.dump(ml,open('model.pkl','wb'))
 
 model=pickle.load(open('model.pkl','rb'))
 
 print(model.predict([[1,2,3,4,5,6,7,8,9]]))
 
-# %%
